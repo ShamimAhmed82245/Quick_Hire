@@ -744,7 +744,7 @@ function LandingPageCtaDesktopVector({
 export default function LandingPageCtaDesktop() {
   return (
     <div
-      className="bg-white relative size-full"
+      className="bg-white relative min-h-[500px] w-full"
       data-name="Landing Page / CTA / Desktop"
     >
       <div

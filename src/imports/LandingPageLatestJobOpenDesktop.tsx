@@ -959,7 +959,7 @@ function CompanyLogo({ className, property1 = "Nomad" }: CompanyLogoProps) {
 export default function LandingPageLatestJobOpenDesktop() {
   return (
     <div
-      className="relative size-full"
+      className="relative min-h-[900px] w-full"
       data-name="Landing Page / Latest Job Open / Desktop"
     >
       <div
