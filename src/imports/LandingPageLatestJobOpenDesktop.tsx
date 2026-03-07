@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import svgPaths from "./svg-63n8s3pmo1";
 import imgBvBoaEet400X4002 from "../assets/1019e78938d48ee332d97cd04f009dbe22e28d4f.png";
@@ -957,6 +958,19 @@ function CompanyLogo({ className, property1 = "Nomad" }: CompanyLogoProps) {
 }
 
 export default function LandingPageLatestJobOpenDesktop() {
+  const [jobs, setJobs] = useState([]);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/jobs")
+      .then((response) => response.json())
+      .then((data) => setJobs(data.data || []))
+      .catch((error) => console.error("Error fetching jobs:", error));
+  }, []);
+
+  const latestJobs = jobs
+    .filter(job => job.is_featured === 0)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 8); // Assuming 8 jobs for the two columns of 4 each
   return (
     <div
       className="relative min-h-[900px] w-full"
@@ -1080,120 +1094,37 @@ export default function LandingPageLatestJobOpenDesktop() {
             className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-[580px]"
             data-name="Col 1"
           >
-            <JobList additionalClassNames="w-full">
-              <CompanyLogo className="relative shrink-0 size-[64px]" />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="Social Media Assistant"
-                text1="Nomad"
-                text2="Paris, France"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
-            <JobList additionalClassNames="w-full">
-              <CompanyLogo
-                className="relative shrink-0 size-[64px]"
-                property1="Dropbox"
-              />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="Brand Designer"
-                text1="Dropbox"
-                text2="San Fransisco, USA"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
-            <JobList additionalClassNames="w-[580px]">
-              <CompanyLogo
-                className="relative shrink-0 size-[64px]"
-                property1="Terraform"
-              />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="Interactive Developer"
-                text1="Terraform"
-                text2="Hamburg, Germany"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
-            <JobList additionalClassNames="w-[580px]">
-              <CompanyLogo
-                className="relative shrink-0 size-[64px]"
-                property1="Packer"
-              />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="HR Manager"
-                text1="Packer"
-                text2="Lucern, Switzerland"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
+            {latestJobs.slice(0, 4).map((job, i) => (
+              <JobList key={job.id} additionalClassNames="w-full">
+                <CompanyLogo className="relative shrink-0 size-[64px]" />
+                <LandingPageLatestJobOpenDesktopJobTitle
+                  text={job.title}
+                  text1={job.company}
+                  text2={job.location}
+                  text3="Full-Time"
+                  text4={job.categories[0]?.name || "General"}
+                  text5={job.categories[1]?.name || job.categories[0]?.name || "General"}
+                />
+              </JobList>
+            ))}
           </div>
           <div
             className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-[580px]"
             data-name="Col 2"
           >
-            <JobList additionalClassNames="w-full">
-              <CompanyLogo
-                className="relative shrink-0 size-[64px]"
-                property1="Netlify"
-              />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="Social Media Assistant"
-                text1="Netlify"
-                text2="Paris, France"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
-            <JobList additionalClassNames="w-full">
-              <CompanyLogo
-                className="relative shrink-0 size-[64px]"
-                property1="Maze"
-              />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="Brand Designer"
-                text1="Maze"
-                text2="San Fransisco, USA"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
-            <JobList additionalClassNames="w-[580px]">
-              <CompanyLogo
-                className="relative shrink-0 size-[64px]"
-                property1="Udacity"
-              />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="Interactive Developer"
-                text1="Udacity"
-                text2="Hamburg, Germany"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
-            <JobList additionalClassNames="w-[580px]">
-              <CompanyLogo
-                className="relative shrink-0 size-[64px]"
-                property1="Webflow"
-              />
-              <LandingPageLatestJobOpenDesktopJobTitle
-                text="HR Manager"
-                text1="Webflow"
-                text2="Lucern, Switzerland"
-                text3="Full-Time"
-                text4="Marketing"
-                text5="Design"
-              />
-            </JobList>
+            {latestJobs.slice(4, 8).map((job, i) => (
+              <JobList key={job.id} additionalClassNames="w-full">
+                <CompanyLogo className="relative shrink-0 size-[64px]" />
+                <LandingPageLatestJobOpenDesktopJobTitle
+                  text={job.title}
+                  text1={job.company}
+                  text2={job.location}
+                  text3="Full-Time"
+                  text4={job.categories[0]?.name || "General"}
+                  text5={job.categories[1]?.name || job.categories[0]?.name || "General"}
+                />
+              </JobList>
+            ))}
           </div>
         </div>
       </div>

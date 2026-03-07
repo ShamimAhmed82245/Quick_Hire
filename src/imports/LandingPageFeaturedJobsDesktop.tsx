@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import svgPaths from "./svg-8507zokh7y";
 import imgBvBoaEet400X4002 from "../assets/1019e78938d48ee332d97cd04f009dbe22e28d4f.png";
@@ -202,7 +203,7 @@ function Title({ text, text1, text2 }: TitleProps) {
             r="2"
           />
         </Wrapper>
-        <p className="font-['Epilogue:Regular',sans-serif] font-normal leading-[1.6] relative shrink-0 text-[#515b6f] text-[16px]">
+        <p className="font-['Epilogue:Regular',sans-serif] font-normal leading-[1.6] relative shrink-0 text-[#515b6f] text-[16px] truncate max-w-[120px]">
           {text2}
         </p>
       </div>
@@ -1782,6 +1783,26 @@ function JobList({
 }
 
 export default function LandingPageFeaturedJobsDesktop() {
+  const [jobs, setJobs] = useState([]);
+  const logos = [
+    "Dropbox",
+    "Pitch",
+    "Blinkist",
+    "ClassPass",
+    "Canva",
+    "GoDaddy",
+    "Twitter",
+  ];
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/jobs")
+      .then((response) => response.json())
+      .then((data) => setJobs(data.data || []))
+      .catch((error) => console.error("Error fetching jobs:", error));
+  }, []);
+
+  const featuredJobs = jobs.filter(job => job.is_featured === 1);
+
   return (
     <div
       className="bg-white relative size-full"
@@ -1847,6 +1868,7 @@ export default function LandingPageFeaturedJobsDesktop() {
           className="content-stretch flex flex-col gap-[32px] items-start relative shrink-0"
           data-name="List"
         >
+          {/* first row: placeholder plus up to 3 jobs */}
           <div
             className="content-stretch flex gap-[32px] items-start relative shrink-0 w-[1192px]"
             data-name="Row 1"
@@ -1858,177 +1880,86 @@ export default function LandingPageFeaturedJobsDesktop() {
               label
               size="Small"
             />
-            <JobList1>
-              <div
-                className="content-stretch flex items-start justify-between relative shrink-0 w-full"
-                data-name="Header"
-              >
-                <CompanyLogo
-                  className="relative shrink-0 size-[48px]"
-                  property1="Dropbox"
+            {featuredJobs.slice(0, 3).map((job, i) => (
+              <JobList1 key={job.id}>
+                <div
+                  className="content-stretch flex items-start justify-between relative shrink-0 w-full"
+                  data-name="Header"
+                >
+                  <CompanyLogo
+                    className="relative shrink-0 size-[48px]"
+                    property1={logos[i] || "Nomad"}
+                  />
+                  <TagText text="Full Time" />
+                </div>
+                <Title
+                  text={job.title}
+                  text1={job.company}
+                  text2={job.location}
                 />
-                <TagText text="Full Time" />
-              </div>
-              <Title
-                text="Brand Designer"
-                text1="Dropbox"
-                text2="San Fransisco, US"
-              />
-              <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
-                Dropbox is looking for Brand Designer to help the team t ...
-              </p>
-              <Helper2 />
-            </JobList1>
-            <JobList1>
-              <div
-                className="content-stretch flex items-start justify-between relative shrink-0 w-full"
-                data-name="Header"
-              >
-                <CompanyLogo
-                  className="relative shrink-0 size-[48px]"
-                  property1="Pitch"
-                />
-                <TagText text="Full Time" />
-              </div>
-              <Title
-                text="Email Marketing"
-                text1="Pitch"
-                text2="Berlin, Germany"
-              />
-              <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
-                Pitch is looking for Customer Manager to join marketing t ...
-              </p>
-              <div className="content-stretch flex gap-[8px] items-start relative shrink-0">
-                <Label />
-              </div>
-            </JobList1>
-            <JobList1>
-              <div
-                className="content-stretch flex items-start justify-between relative shrink-0 w-full"
-                data-name="Header"
-              >
-                <CompanyLogo
-                  className="relative shrink-0 size-[48px]"
-                  property1="Blinkist"
-                />
-                <TagText text="Full Time" />
-              </div>
-              <Title
-                text="Visual Designer"
-                text1="Blinklist"
-                text2="Granada, Spain"
-              />
-              <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
-                Blinkist is looking for Visual Designer to help team desi ...
-              </p>
-              <div className="content-stretch flex gap-[8px] items-start relative shrink-0">
-                <Label1 />
-              </div>
-            </JobList1>
+                <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
+                  {job.description.length > 50
+                    ? job.description.substring(0, 50) + "..."
+                    : job.description}
+                </p>
+                <div className="content-stretch flex gap-[8px] items-start relative shrink-0">
+                  <div
+                    className="bg-[rgba(86,205,173,0.1)] relative rounded-[80px] shrink-0"
+                    data-name="Label"
+                  >
+                    <div className="flex flex-row items-center justify-center size-full">
+                      <Text
+                        text={job.categories[0]?.name || "General"}
+                        additionalClassNames="justify-center px-[10px] py-[6px]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </JobList1>
+            ))}
           </div>
+          {/* second row: next up to 4 jobs */}
           <div
             className="content-stretch flex gap-[32px] items-start relative shrink-0 w-[1192px]"
             data-name="Row 2"
           >
-            <JobList1>
-              <div
-                className="content-stretch flex items-start justify-between relative shrink-0 w-full"
-                data-name="Header"
-              >
-                <CompanyLogo
-                  className="relative shrink-0 size-[48px]"
-                  property1="ClassPass"
-                />
-                <TagText text="Full Time" />
-              </div>
-              <Title
-                text="Product Designer"
-                text1="ClassPass"
-                text2="Manchester, UK"
-              />
-              <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
-                ClassPass is looking for Product Designer to help us...
-              </p>
-              <Helper1 />
-            </JobList1>
-            <JobList1>
-              <div
-                className="content-stretch flex items-start justify-between relative shrink-0 w-full"
-                data-name="Header"
-              >
-                <CompanyLogo
-                  className="relative shrink-0 size-[48px]"
-                  property1="Canva"
-                />
-                <TagText text="Full Time" />
-              </div>
-              <Title
-                text="Lead Designer"
-                text1="Canva"
-                text2="Ontario, Canada"
-              />
-              <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
-                Canva is looking for Lead Engineer to help develop n ...
-              </p>
-              <Helper2 />
-            </JobList1>
-            <JobList1>
-              <div
-                className="content-stretch flex items-start justify-between relative shrink-0 w-full"
-                data-name="Header"
-              >
-                <CompanyLogo
-                  className="relative shrink-0 size-[48px]"
-                  property1="GoDaddy"
-                />
-                <TagText text="Full Time" />
-              </div>
-              <Title
-                text="Brand Strategist"
-                text1="GoDaddy"
-                text2="Marseille, France"
-              />
-              <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
-                GoDaddy is looking for Brand Strategist to join the team...
-              </p>
-              <div className="content-stretch flex gap-[8px] items-start relative shrink-0">
-                <Label />
-              </div>
-            </JobList1>
-            <JobList1>
-              <div
-                className="content-stretch flex items-start justify-between relative shrink-0 w-full"
-                data-name="Header"
-              >
-                <CompanyLogo
-                  className="relative shrink-0 size-[48px]"
-                  property1="Twitter"
-                />
-                <TagText text="Full Time" />
-              </div>
-              <Title
-                text="Data Analyst"
-                text1="Twitter"
-                text2="San Diego, US"
-              />
-              <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
-                Twitter is looking for Data Analyst to help team desi ...
-              </p>
-              <div className="content-stretch flex gap-[8px] items-start relative shrink-0">
+            {featuredJobs.slice(3, 7).map((job, i) => (
+              <JobList1 key={job.id}>
                 <div
-                  className="bg-[rgba(255,101,80,0.1)] relative rounded-[80px] shrink-0"
-                  data-name="Label"
+                  className="content-stretch flex items-start justify-between relative shrink-0 w-full"
+                  data-name="Header"
                 >
-                  <div className="flex flex-row items-center justify-center size-full">
-                    <div className="content-stretch flex gap-[8px] items-center justify-center px-[16px] py-[8px] relative">
-                      <p className="font-['Epilogue:SemiBold',sans-serif] font-semibold leading-[1.6] relative shrink-0 text-[#ff6550] text-[14px]">
-                        Technology
-                      </p>
+                  <CompanyLogo
+                    className="relative shrink-0 size-[48px]"
+                    property1={logos[i + 3] || "Nomad"}
+                  />
+                  <TagText text="Full Time" />
+                </div>
+                <Title
+                  text={job.title}
+                  text1={job.company}
+                  text2={job.location}
+                />
+                <p className="font-['Inter:Regular',sans-serif] font-normal leading-[1.6] not-italic relative shrink-0 text-[#7c8493] text-[16px] w-[226px] whitespace-pre-wrap">
+                  {job.description.length > 50
+                    ? job.description.substring(0, 50) + "..."
+                    : job.description}
+                </p>
+                <div className="content-stretch flex gap-[8px] items-start relative shrink-0">
+                  <div
+                    className="bg-[rgba(86,205,173,0.1)] relative rounded-[80px] shrink-0"
+                    data-name="Label"
+                  >
+                    <div className="flex flex-row items-center justify-center size-full">
+                      <Text
+                        text={job.categories[0]?.name || "General"}
+                        additionalClassNames="justify-center px-[10px] py-[6px]"
+                      />
                     </div>
                   </div>
                 </div>
-              </div>
-            </JobList1>
+              </JobList1>
+            ))}
           </div>
         </div>
       </div>
