@@ -1801,7 +1801,7 @@ export default function LandingPageFeaturedJobsDesktop() {
       .catch((error) => console.error("Error fetching jobs:", error));
   }, []);
 
-  const featuredJobs = jobs.filter(job => job.is_featured === 1);
+  const featuredJobs = jobs.filter((job) => job.is_featured === 1);
 
   return (
     <div

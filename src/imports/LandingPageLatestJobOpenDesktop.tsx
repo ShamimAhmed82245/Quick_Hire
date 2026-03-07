@@ -968,7 +968,7 @@ export default function LandingPageLatestJobOpenDesktop() {
   }, []);
 
   const latestJobs = jobs
-    .filter(job => job.is_featured === 0)
+    .filter((job) => job.is_featured === 0)
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 8); // Assuming 8 jobs for the two columns of 4 each
   return (
@@ -1103,7 +1103,11 @@ export default function LandingPageLatestJobOpenDesktop() {
                   text2={job.location}
                   text3="Full-Time"
                   text4={job.categories[0]?.name || "General"}
-                  text5={job.categories[1]?.name || job.categories[0]?.name || "General"}
+                  text5={
+                    job.categories[1]?.name ||
+                    job.categories[0]?.name ||
+                    "General"
+                  }
                 />
               </JobList>
             ))}
@@ -1121,7 +1125,11 @@ export default function LandingPageLatestJobOpenDesktop() {
                   text2={job.location}
                   text3="Full-Time"
                   text4={job.categories[0]?.name || "General"}
-                  text5={job.categories[1]?.name || job.categories[0]?.name || "General"}
+                  text5={
+                    job.categories[1]?.name ||
+                    job.categories[0]?.name ||
+                    "General"
+                  }
                 />
               </JobList>
             ))}
